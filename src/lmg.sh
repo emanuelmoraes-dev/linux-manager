@@ -64,7 +64,7 @@ function task_parameters {
 				task_script_path="$2" &&
 				shift &&
 				task_script_path="$(to_absolute "$task_script_path")" &&
-				task_script_content="(cat "$task_script_path")";;
+				task_script_content="$(cat "$task_script_path")";;
 			@) task_script_content="$2" && shift;;
 			*) return $ERR_INVALID_TASK_ARG
 		esac &&
