@@ -21,6 +21,26 @@ DIRNAME="$(dirname "$0")"
 source "$DIRNAME/env.sh"
 source "$DIRNAME/util.sh"
 
+# Mostra mensagem de ajuda com a descrição de todas as opções
+function helpout {
+    echo "Linux-Manager@$VERSION"
+    echo
+    echo "Disponibiliza um conjunto de ferramentas para automatizar e organizar as"
+    echo "atividades realizadas e a serem realizadas em um sistema operacional linux"
+    echo
+    echo "Parâmetros Nomeados:"
+    echo "    --help: Mostra mensagem de ajuda com a descrição de todas as opções"
+    echo "    --version: Mostra a versão atual"
+    echo "    task: Cria uma nova tarefa"
+    echo
+    if [ "$1" = "--autor" ]; then
+        echo "Autor: Emanuel Moraes de Almeida"
+        echo "Email: emanuelmoraes297@gmail.com"
+        echo "Github: https://github.com/emanuelmoraes-dev"
+        echo
+    fi
+}
+
 # Realiza as configurações necessárias no início da execução do programa
 function config {
     mkdir -p $DATA_FOLDER/$TASK_FOLDER &&
