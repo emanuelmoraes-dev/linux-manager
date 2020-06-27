@@ -13,7 +13,10 @@ TASK_RUNNER_FOLDER=task-runner
 INFO_FOLDER=info
 
 # Nome do script executável para executar a tarefa do tipo "script"
-TASK_SCRIPT_NAME="command.sh"
+TASK_SCRIPT_NAME_UP="up.sh"
+
+# Nome do script executável para executar a tarefa do tipo "script"
+TASK_SCRIPT_NAME_DOWN="down.sh"
 
 # Nome do arquivo que conterá o nome do tipo da tarefa
 TASK_TYPE_FILENAME="task-type"

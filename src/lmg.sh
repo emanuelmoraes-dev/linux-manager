@@ -51,9 +51,13 @@ function config {
 
 # processa os parâmetros de task
 function task_parameters {
+	local task_up=1 &&
 	local task_script_path &&
 	task_type=script &&
 	task_version=1 &&
+	task_name= &&
+	task_message= &&
+
 	while [ "$#" != 0 ]; do
 		case "$1" in
 			--name|-n) task_name="$2" && shift;;
@@ -64,8 +68,20 @@ function task_parameters {
 				task_script_path="$2" &&
 				shift &&
 				task_script_path="$(to_absolute "$task_script_path")" &&
-				task_script_content="$(cat "$task_script_path")";;
-			@) task_script_content="$2" && shift;;
+				if [ "$task_up" = 1 ]; then
+					task_script_content_up="$(cat "$task_script_path")"
+				else
+					task_script_content_down="$(cat "$task_script_path")"
+				fi;;
+			--up|-u) task_up=1;;
+			--down|-d) task_up=0;;
+			@)
+				if [ "$task_up" = 1 ]; then
+					task_script_content_up="$2"
+				else
+					task_script_content_down="$2"
+				fi &&
+				shift;;
 			*) return $ERR_INVALID_TASK_ARG
 		esac &&
 		shift ||
@@ -76,7 +92,11 @@ function task_parameters {
 		return $ERR_REQUIRE_TASK_NAME
 	fi &&
 
-	if [ "$task_type" = "script" ] && [ -z "$task_script_content" ]; then
+	if (
+		[ "$task_type" = "script" ] &&
+		[ -z "$task_script_content_up" ] &&
+		! [ -f "$task_folder/$TASK_SCRIPT_NAME_UP" ]
+	); then
 		return $ERR_REQUIRE_TASK_SCRIPT_CONTENT
 	fi ||
 
@@ -90,8 +110,17 @@ function create_task_script {
 	printf "$task_type" > "$task_folder/$TASK_TYPE_FILENAME" &&
 	printf "$task_name" > "$task_folder/$TASK_NAME_FILENAME" &&
 	printf "$task_message" > "$task_folder/$TASK_MESSAGE_FILENAME" &&
-	printf "$task_script_content" > "$task_folder/$TASK_SCRIPT_NAME" &&
-	chmod +x "$task_folder/$TASK_SCRIPT_NAME" ||
+
+	if [ "$task_script_content_up" ]; then
+		printf "$task_script_content_up" > "$task_folder/$TASK_SCRIPT_NAME_UP" &&
+		chmod +x "$task_folder/$TASK_SCRIPT_NAME_UP"
+	fi &&
+
+	if [ "$task_script_content_down" ]; then
+		printf "$task_script_content_down" > "$task_folder/$TASK_SCRIPT_NAME_DOWN" &&
+		chmod +x "$task_folder/$TASK_SCRIPT_NAME_DOWN"
+	fi ||
+
 	return $?
 }
 
