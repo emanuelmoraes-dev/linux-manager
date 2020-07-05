@@ -16,7 +16,7 @@ VERSION=0.0.1
 # Email: emanuelmoraes297@gmail.com
 # Github: https://github.com/emanuelmoraes-dev
 
-DIRNAME="$(dirname "$0")"
+[ -z "$DIRNAME" ] && DIRNAME="$(dirname "$0")"
 
 source "$DIRNAME/env.sh"
 source "$DIRNAME/util.sh"
