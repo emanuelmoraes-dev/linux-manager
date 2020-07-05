@@ -159,7 +159,7 @@ function apply_parameters {
 # Função principal
 function main {
 	local err &&
-	config && 
+	config &&
 	apply_parameters "$@" || (
 		err=$?
 		case "$err" in
