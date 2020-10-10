@@ -4,7 +4,7 @@ Conjunto de ferramentas para automatizar e organizar as atividades realizadas e 
 ## install
 
 ```sh
-folder_instalation="$HOME/.local/lmg"
+folder_instalation="$HOME/.local/share/lmg"
 mkdir -p "$folder_instalation"
 cp -rf src/* "$folder_instalation"
 printf "$(./template.sh)" "$folder_instalation" > lmg
