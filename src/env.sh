@@ -28,7 +28,7 @@
 [ -z "$TASK_INFO_NAME_DOWN" ] && TASK_INFO_NAME_DOWN="task-down.md"
 
 # Nome do programa para visualizar o conteúdo da tarefa do tipo "info"
-[ -z "$TASK_INFO_VIEWER" ] && TASK_INFO_VIEWER="mdv"
+[ -z "$TASK_INFO_VIEWER" ] && TASK_INFO_VIEWER="cat"
 
 # Nome do arquivo que conterá o nome do tipo da tarefa
 [ -z "$TASK_TYPE_FILENAME" ] && TASK_TYPE_FILENAME="task-type"
