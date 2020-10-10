@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=0.0.7
+VERSION=0.0.8
 
-# Linux-Manager@0.0.7
+# Linux-Manager@0.0.8
 #
 # Disponibiliza um conjunto de ferramentas para automatizar e organizar as
 # atividades realizadas e a serem realizadas em um sistema operacional linux
@@ -148,6 +148,14 @@ function task_parameters {
 		! [ -f "$task_folder/$TASK_SCRIPT_NAME_UP" ]
 	); then
 		return $ERR_REQUIRE_TASK_SCRIPT_CONTENT
+	fi &&
+
+	if (
+		[ "$task_type" = "info" ] &&
+		[ -z "$task_content_up" ] &&
+		! [ -f "$task_folder/$TASK_INFO_NAME_UP" ]
+	); then
+		return $ERR_REQUIRE_TASK_INFO_CONTENT
 	fi ||
 
 	return $?
@@ -346,6 +354,7 @@ function main {
 			$ERR_INVALID_TASK_ARG) return $(m="Erro: Argumento de tarefa inválido!" e=$err helperr);;
 			$ERR_REQUIRE_TASK_NAME) return $(m="Erro: O nome da tarefa é obrigatório!" e=$err helperr);;
 			$ERR_REQUIRE_TASK_SCRIPT_CONTENT) return $(m="Erro: Uma tarefa do tipo \"script\" deve possuir um script!" e=$err helperr);;
+			$ERR_REQUIRE_TASK_INFO_CONTENT) return $(m="Erro: Uma tarefa do tipo \"info\" deve possuir um conteúdo!" e=$err helperr);;
 			*) return $(helperr);;
 		esac
 	)

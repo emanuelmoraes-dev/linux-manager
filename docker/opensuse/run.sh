@@ -1,7 +1,7 @@
 #!/bin/sh
 
 [ -z "$NAME" ]    && NAME="lmg"
-[ -z "$VERSION" ] && VERSION=0.0.7
+[ -z "$VERSION" ] && VERSION=0.0.8
 [ -z "$DIRNAME" ] && DIRNAME="$(dirname "$0")/../../src"
 
 DIRNAME="$(sh -c "cd \"$DIRNAME\" && pwd")"
