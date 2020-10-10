@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+IMPORTS=(
+    DATA_FOLDER
+    TASK_FOLDER
+    TASK_RUNNER_FOLDER
+    TASK_RUNNER_VERSION_FILENAME
+    TASK_RUNNER_COMMAND_FILENAME
+    TASK_SCRIPT_NAME_UP
+    TASK_SCRIPT_NAME_DOWN
+    TASK_INFO_NAME_UP
+    TASK_INFO_NAME_DOWN
+    TASK_INFO_VIEWER
+    TASK_TYPE_FILENAME
+    TASK_NAME_FILENAME
+    TASK_MESSAGE_FILENAME
+    ERROR_THEME
+)
+
+printf '#!/usr/bin/env bash\n'
+
+for IMPORT in "${IMPORTS[@]}"; do
+    printf "$IMPORT=\$$IMPORT "
+done
+
+printf '"%%s/lmg.sh" "$@"'

@@ -7,7 +7,7 @@ Conjunto de ferramentas para automatizar e organizar as atividades realizadas e 
 folder_instalation="$HOME/.local/lmg"
 mkdir -p "$folder_instalation"
 cp -rf src/* "$folder_instalation"
-printf '#!/usr/bin/env bash\n"%s/lmg.sh" "$@"' "$folder_instalation" > lmg
+printf "$(./template.sh)" "$folder_instalation" > lmg
 chmod +x lmg
 sudo mv lmg /usr/bin
 ```

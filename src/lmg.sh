@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=0.0.4
+VERSION=0.0.5
 
-# Linux-Manager@0.0.4
+# Linux-Manager@0.0.5
 #
 # Disponibiliza um conjunto de ferramentas para automatizar e organizar as
 # atividades realizadas e a serem realizadas em um sistema operacional linux
