@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Localização da pasta que conterá as informações registradas na aplicação
-[ -z "$DATA_FOLDER" ] && DATA_FOLDER=$HOME/.lmg
+[ -z "$DATA_FOLDER" ] && DATA_FOLDER=$DIRNAME/.lmg
 
 # Nome da pasta que conterá a lista de tarefas
 [ -z "$TASK_FOLDER" ] && TASK_FOLDER=task

@@ -4,9 +4,10 @@ Conjunto de ferramentas para automatizar e organizar as atividades realizadas e 
 ## install
 
 ```sh
-folder_instalation="/usr/local/lmg"
-sudo mkdir -p "$folder_instalation"
-sudo cp -rf src/* "$folder_instalation"
-sudo echo "DATA_FOLDER='$folder_instalation' '$folder_instalation/lmg.sh'" '"$@"' > /usr/bin/lmg
-sudo chmod +x /usr/bin/lmg
+folder_instalation="$HOME/.local/lmg"
+mkdir -p "$folder_instalation"
+cp -rf src/* "$folder_instalation"
+printf '#!/usr/bin/env bash\n"%s/lmg.sh" "$@"' "$folder_instalation" > lmg
+chmod +x lmg
+sudo mv lmg /usr/bin
 ```

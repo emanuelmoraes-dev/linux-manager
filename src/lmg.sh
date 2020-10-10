@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=0.0.3
+VERSION=0.0.4
 
-# Linux-Manager@0.0.3
+# Linux-Manager@0.0.4
 #
 # Disponibiliza um conjunto de ferramentas para automatizar e organizar as
 # atividades realizadas e a serem realizadas em um sistema operacional linux
@@ -41,6 +41,7 @@ VERSION=0.0.3
 # Email: emanuelmoraes297@gmail.com
 # Github: https://github.com/emanuelmoraes-dev
 
+# Diretório da aplicação
 [ -z "$DIRNAME" ] && DIRNAME="$(dirname "$0")"
 
 source "$DIRNAME/env.sh"
