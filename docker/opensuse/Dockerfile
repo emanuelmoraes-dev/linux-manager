@@ -1,3 +1,3 @@
 FROM opensuse/tumbleweed
-RUN mkdir -p /root/app
-VOLUME [ "/root/app" ]
+RUN mkdir -p /mnt/app
+VOLUME [ "/mnt/app" ]

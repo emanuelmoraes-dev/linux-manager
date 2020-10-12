@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=0.0.8
+VERSION=0.0.11
 
-# Linux-Manager@0.0.8
+# Linux-Manager@0.0.11
 #
 # Disponibiliza um conjunto de ferramentas para automatizar e organizar as
 # atividades realizadas e a serem realizadas em um sistema operacional linux
@@ -244,17 +244,18 @@ function up {
 	local task_folder="$DATA_FOLDER/$TASK_FOLDER/$task_name/$task_version" &&
 	local task_type="$(cat "$task_folder/$TASK_TYPE_FILENAME")" &&
 	local task_runner_folder="$DATA_FOLDER/$TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
+
+	mkdir -p "$task_runner_folder" &&
+	cp "$task_folder/$TASK_TYPE_FILENAME" "$task_runner_folder/" &&
+	cp "$task_folder/$TASK_NAME_FILENAME" "$task_runner_folder/" &&
+	cp "$task_folder/$TASK_MESSAGE_FILENAME" "$task_runner_folder/" &&
+	printf "$task_version" > "$task_runner_folder/$TASK_RUNNER_VERSION_FILENAME" &&
+
 	local task_content_up &&
 
 	case "$task_type" in
 		script)
-			mkdir -p "$task_runner_folder" &&
-
-			cp "$task_folder/$TASK_TYPE_FILENAME" "$task_runner_folder" &&
-			cp "$task_folder/$TASK_NAME_FILENAME" "$task_runner_folder" &&
-			cp "$task_folder/$TASK_MESSAGE_FILENAME" "$task_runner_folder" &&
 			cp "$task_folder/$TASK_SCRIPT_NAME_UP" "$task_runner_folder/$TASK_RUNNER_COMMAND_FILENAME" &&
-			printf "$task_version" > "$task_runner_folder/$TASK_RUNNER_VERSION_FILENAME" &&
 
 			task_content_up='"$(dirname $0)"'"/$TASK_RUNNER_COMMAND_FILENAME" &&
 			if [ "$task_env" ]; then
@@ -269,10 +270,12 @@ function up {
 			"$task_runner_folder/$TASK_SCRIPT_NAME_UP"
 			;;
 		info)
+			cp "$task_folder/$TASK_INFO_NAME_UP" "$task_runner_folder/" &&
+
 			if which "$TASK_INFO_VIEWER" 1> /dev/null 2> /dev/null; then
-				"$TASK_INFO_VIEWER" "$task_folder/$TASK_INFO_NAME_UP"
+				"$TASK_INFO_VIEWER" "$task_runner_folder/$TASK_INFO_NAME_UP"
 			else
-				cat "$task_folder/$TASK_INFO_NAME_UP"
+				cat "$task_runner_folder/$TASK_INFO_NAME_UP"
 			fi
 	esac ||
 
@@ -285,17 +288,18 @@ function down {
 	local task_folder="$DATA_FOLDER/$TASK_FOLDER/$task_name/$task_version" &&
 	local task_type="$(cat "$task_folder/$TASK_TYPE_FILENAME")" &&
 	local task_runner_folder="$DATA_FOLDER/$TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
+
+	mkdir -p "$task_runner_folder" &&
+	cp "$task_folder/$TASK_TYPE_FILENAME" "$task_runner_folder/" &&
+	cp "$task_folder/$TASK_NAME_FILENAME" "$task_runner_folder/" &&
+	cp "$task_folder/$TASK_MESSAGE_FILENAME" "$task_runner_folder/" &&
+	printf "$task_version" > "$task_runner_folder/$TASK_RUNNER_VERSION_FILENAME" &&
+
 	local task_content_down &&
 
 	case "$task_type" in
 		script)
-			mkdir -p "$task_runner_folder" &&
-
-			cp "$task_folder/$TASK_TYPE_FILENAME" "$task_runner_folder" &&
-			cp "$task_folder/$TASK_NAME_FILENAME" "$task_runner_folder" &&
-			cp "$task_folder/$TASK_MESSAGE_FILENAME" "$task_runner_folder" &&
 			cp "$task_folder/$TASK_SCRIPT_NAME_DOWN" "$task_runner_folder/$TASK_RUNNER_COMMAND_FILENAME" &&
-			printf "$task_version" > "$task_runner_folder/$TASK_RUNNER_VERSION_FILENAME" &&
 
 			task_content_down='"$(dirname $0)"'"/$TASK_RUNNER_COMMAND_FILENAME" &&
 			if [ "$task_env" ]; then
@@ -310,10 +314,12 @@ function down {
 			"$task_runner_folder/$TASK_SCRIPT_NAME_DOWN"
 			;;
 		info)
+			cp "$task_folder/$TASK_INFO_NAME_DOWN" "$task_runner_folder/" &&
+
 			if which "$TASK_INFO_VIEWER" 1> /dev/null 2> /dev/null; then
-				"$TASK_INFO_VIEWER" "$task_folder/$TASK_INFO_NAME_DOWN"
+				"$TASK_INFO_VIEWER" "$task_runner_folder/$TASK_INFO_NAME_DOWN"
 			else
-				cat "$task_folder/$TASK_INFO_NAME_DOWN"
+				cat "$task_runner_folder/$TASK_INFO_NAME_DOWN"
 			fi
 	esac ||
 
