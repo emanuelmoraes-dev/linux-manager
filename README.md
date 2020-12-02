@@ -26,7 +26,7 @@ lmg --version
 
 ## parameters
 
-<pre>--help:    Shows all options
+<pre>    --help:    Shows all options
     --version: Shows the current version
     up:        Perform a task
         --name|-n:    Defines the task name
