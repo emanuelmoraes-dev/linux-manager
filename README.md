@@ -26,7 +26,7 @@ lmg --version
 
 ## help
 
-Linux-Manager@0.0.11
+<pre>Linux-Manager@0.0.11
 
 Set of tools to automate and organize the activities performed and to be
 performed in a linux operating system
@@ -57,4 +57,4 @@ Named Parameters:
         --up|-u:      Defines that the next --path|-p|@ will define the
                       content file responsible for doing the task
         --down|-d:    Defines that the next --path|-p|@ will define the
-                      content file responsible for undoing the task
+                      content file responsible for undoing the task</pre>
