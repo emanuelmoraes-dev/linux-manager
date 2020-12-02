@@ -4,38 +4,36 @@ VERSION=0.0.11
 
 # Linux-Manager@0.0.11
 #
-# Disponibiliza um conjunto de ferramentas para automatizar e organizar as
-# atividades realizadas e a serem realizadas em um sistema operacional linux
+# Set of tools to automate and organize the activities performed and to be
+# performed in a linux operating system
 #
-# Parâmetros Nomeados:
-#     --help:    Mostra todas as opções
-#     --version: Mostra a versão atual
-#     up:        Executa uma tarefa
-#         --name|-n:    Define o nome da tarefa
-#         --version|-v: Define a versão da tarefa
-#         --env|-e:     Define o conteúdo (enviroment)
-#                       a ser adicionado antes do script
-#         --args|-a:    Define os argumentos do script
-#     down:      Desfaz a execução de uma tarefa
-#         --name|-n:    Define o nome da tarefa
-#         --version|-v: Define a versão da tarefa
-#         --env|-e:     Define o conteúdo (enviroment)
-#                       a ser adicionado antes do script
-#         --args|-a:    Define os argumentos do script
-#     task:      Cria uma nova tarefa
-#         --name|-n:    Define o nome da tarefa
-#         --version|-v: Define a versão da tarefa
-#         --message|-m: Define a descrição da tarefa
-#         --type|-t:    Define o tipo de tarefa (script e info)
-#         --path|-p:    Nome do arquivo que contém o conteúdo a
-#                       ser copiado para a tarefa
-#         @:            Contém o conteúdo da tarefa em formato literal
-#         --up|-u:      Define que o próximo --path|-p|@ definirá
-#                       o arquivo do conteúdo responsável por fazer
-#                       a tarefa
-#         --down|-d:    Define que o próximo --path|-p|@ definirá
-#                       o arquivo do conteúdo responsável por desfazer
-#                       a tarefa
+# Named Parameters:
+#     --help:    Shows all options
+#     --version: Shows the current version
+#     up:        Perform a task
+#         --name|-n:    Defines the task name
+#         --version|-v: Sets the version of the task
+#         --env|-e:     Defines the content (environment) to be added before
+#                       the script
+#         --args|-a:    Defines the script arguments
+#     down:      Undo a task
+#         --name|-n:    Defines the task name
+#         --version|-v: Sets the version of the task
+#         --env|-e:     Defines the content (environment) to be added before
+#                       the script
+#         --args|-a:    Defines the script arguments
+#     task:      creates a new task
+#         --name|-n:    Defines the task name
+#         --version|-v: Sets the version of the task
+#         --message|-m: Defines the task description
+#         --type|-t:    Defines the type of task ("script" and "info")
+#         --path|-p:    Name of the file containing the content to be copied
+#                       to the task
+#         @:            Contains task content in literal format
+#         --up|-u:      Defines that the next --path|-p|@ will define the
+#                       content file responsible for doing the task
+#         --down|-d:    Defines that the next --path|-p|@ will define the
+#                       content file responsible for undoing the task
 #
 # Autor: Emanuel Moraes de Almeida
 # Email: emanuelmoraes297@gmail.com
@@ -51,38 +49,36 @@ source "$DIRNAME/util.sh"
 function helpout {
     echo "Linux-Manager@$VERSION"
     echo
-    echo "Disponibiliza um conjunto de ferramentas para automatizar e organizar as"
-    echo "atividades realizadas e a serem realizadas em um sistema operacional linux"
+    echo "Set of tools to automate and organize the activities performed and to be"
+    echo "performed in a linux operating system"
     echo
-    echo "Parâmetros Nomeados:"
-	echo "    --help:    Mostra mensagem de ajuda com a descrição de todas as opções"
-    echo "    --version: Mostra a versão atual"
-    echo "    up:        Executa uma tarefa"
-    echo "        --name|-n:    Define o nome da tarefa"
-    echo "        --version|-v: Define a versão da tarefa"
-    echo "        --env|-e:     Define o conteúdo (enviroment)"
-    echo "                      a ser adicionado antes do script"
-    echo "        --args|-a:    Define os argumentos do script"
-    echo "    down:      Desfaz a execução de uma tarefa"
-    echo "        --name|-n:    Define o nome da tarefa"
-    echo "        --version|-v: Define a versão da tarefa"
-	echo "        --env|-e:     Define o conteúdo (enviroment)"
-    echo "                      a ser adicionado antes do script"
-    echo "        --args|-a:    Define os argumentos do script"
-    echo "    task:      Cria uma nova tarefa"
-    echo "        --name|-n:    Define o nome da tarefa"
-	echo "        --version|-v: Define a versão da tarefa"
-    echo "        --message|-m: Define a descrição da tarefa"
-    echo "        --type|-t:    Define o tipo de tarefa (script e info)"
-    echo "        --path|-p:    Nome do arquivo que contém o conteúdo a"
-    echo "                      ser copiado para a tarefa"
-    echo "        @:            Contém o conteúdo da tarefa em formato literal"
-    echo "        --up|-u:      Define que o próximo --path|-p|@ definirá"
-    echo "                      o arquivo do conteúdo responsável por fazer"
-    echo "                      a tarefa"
-    echo "        --down|-d:    Define que o próximo --path|-p|@ definirá"
-    echo "                      o arquivo do conteúdo responsável por desfazer"
-    echo "                      a tarefa"
+    echo "Named Parameters:"
+	echo "    --help:    Shows all options"
+    echo "    --version: Shows the current version"
+    echo "    up:        Perform a task"
+    echo "        --name|-n:    Defines the task name"
+    echo "        --version|-v: Sets the version of the task"
+    echo "        --env|-e:     Defines the content (environment) to be added before"
+    echo "                      the script"
+    echo "        --args|-a:    Defines the script arguments"
+    echo "    down:      Undo a task"
+    echo "        --name|-n:    Defines the task name"
+    echo "        --version|-v: Sets the version of the task"
+    echo "        --env|-e:     Defines the content (environment) to be added before"
+    echo "                      the script"
+    echo "        --args|-a:    Defines the script arguments"
+    echo "    task:      creates a new task"
+    echo "        --name|-n:    Defines the task name"
+	echo "        --version|-v: Sets the version of the task"
+    echo "        --message|-m: Defines the task description"
+    echo "        --type|-t:    Defines the type of task (\"script\" and \"info\")"
+    echo "        --path|-p:    Name of the file containing the content to be copied"
+    echo "                      to the task"
+    echo "        @:            Contains task content in literal format"
+    echo "        --up|-u:      Defines that the next --path|-p|@ will define the"
+    echo "                      content file responsible for doing the task"
+    echo "        --down|-d:    Defines that the next --path|-p|@ will define the"
+    echo "                      content file responsible for undoing the task"
     echo
     if [ "$1" = "--autor" ]; then
         echo "Autor: Emanuel Moraes de Almeida"
