@@ -24,7 +24,7 @@ lmg --help
 lmg --version
 ```
 
-## Parameters
+## parameters
 
 <pre>--help:    Shows all options
     --version: Shows the current version
