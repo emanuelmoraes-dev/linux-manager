@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ -z "$NAME" ]    && NAME="lmg-opensuse"
+[ -z "$NAME" ]    && NAME="lmg-ubuntu"
 [ -z "$VERSION" ] && VERSION=0.0.11
 [ -z "$DIRNAME" ] && DIRNAME="$(dirname "$0")/../../src"
 [ -z "$USER" ]    && USER="root"
