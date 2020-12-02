@@ -24,15 +24,9 @@ lmg --help
 lmg --version
 ```
 
-## help
+## Parameters
 
-<pre>Linux-Manager@0.0.11
-
-Set of tools to automate and organize the activities performed and to be
-performed in a linux operating system
-
-Named Parameters:
-    --help:    Shows all options
+<pre>--help:    Shows all options
     --version: Shows the current version
     up:        Perform a task
         --name|-n:    Defines the task name
