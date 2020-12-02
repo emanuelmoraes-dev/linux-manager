@@ -4,12 +4,10 @@ Conjunto de ferramentas para automatizar e organizar as atividades realizadas e 
 ## install
 
 ```sh
-folder_instalation="$HOME/.local/share/lmg"
-git clone https://github.com/emanuelmoraes-dev/linux-manager.git
-cd linux-manager
-mkdir -p "$folder_instalation"
-cp -rf src/* "$folder_instalation"
-printf "$(./template.sh)" "$folder_instalation" > lmg
-chmod +x lmg
-sudo mv lmg /usr/bin
+git clone https://github.com/emanuelmoraes-dev/linux-manager.git &&
+cd linux-manager &&
+./install # <folder_instalation>
 ```
+
+### OBS
+Se "folder_instalation" não for informado para o script de instalação, por padrão, será efetuado a instalação em "$HOME/.local/share/lmg" (se **não** root) ou "/usr/local/share/lmg" (se for root).
