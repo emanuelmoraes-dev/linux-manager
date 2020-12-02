@@ -1,5 +1,5 @@
 # linux-manager
-Conjunto de ferramentas para automatizar e organizar as atividades realizadas e a serem realizadas em um sistema operacional linux
+Set of tools to automate and organize the activities performed and to be performed in a linux operating system
 
 ## install
 
@@ -10,4 +10,51 @@ cd linux-manager &&
 ```
 
 ### OBS
-Se "folder_instalation" não for informado para o script de instalação, por padrão, será efetuado a instalação em "$HOME/.local/share/lmg" (se **não** root) ou "/usr/local/share/lmg" (se for root).
+If "folder_instalation" is not provided for the installation script, by default, the installation will be carried out in "$HOME/.local/share/lmg" (if **not** root) or "/usr/local/share/lmg (if root)
+
+## show help
+
+```sh
+lmg --help
+```
+
+## show version
+
+```sh
+lmg --version
+```
+
+## help
+
+Linux-Manager@0.0.11
+
+Set of tools to automate and organize the activities performed and to be
+performed in a linux operating system
+
+Named Parameters:
+    --help:    Shows all options
+    --version: Shows the current version
+    up:        Perform a task
+        --name|-n:    Defines the task name
+        --version|-v: Sets the version of the task
+        --env|-e:     Defines the content (environment) to be added before
+                      the script
+        --args|-a:    Defines the script arguments
+    down:      Undo a task
+        --name|-n:    Defines the task name
+        --version|-v: Sets the version of the task
+        --env|-e:     Defines the content (environment) to be added before
+                      the script
+        --args|-a:    Defines the script arguments
+    task:      creates a new task
+        --name|-n:    Defines the task name
+        --version|-v: Sets the version of the task
+        --message|-m: Defines the task description
+        --type|-t:    Defines the type of task ("script" and "info")
+        --path|-p:    Name of the file containing the content to be copied
+                      to the task
+        @:            Contains task content in literal format
+        --up|-u:      Defines that the next --path|-p|@ will define the
+                      content file responsible for doing the task
+        --down|-d:    Defines that the next --path|-p|@ will define the
+                      content file responsible for undoing the task
