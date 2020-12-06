@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=0.0.13
+VERSION=0.0.14
 
-# Linux-Manager@0.0.13
+# Linux-Manager@0.0.14
 #
 # Set of tools to automate and organize the activities performed and to be
 # performed in a linux operating system

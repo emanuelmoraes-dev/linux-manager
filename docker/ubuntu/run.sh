@@ -1,7 +1,7 @@
 #!/bin/sh
 
 [ -z "$NAME" ]    && NAME="lmg-ubuntu"
-[ -z "$VERSION" ] && VERSION=0.0.13
+[ -z "$VERSION" ] && VERSION=0.0.14
 [ -z "$DIRNAME" ] && DIRNAME="$(dirname "$0")/../.."
 [ -z "$USER" ]    && USER="root"
 

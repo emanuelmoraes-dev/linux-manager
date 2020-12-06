@@ -1,3 +1,4 @@
 FROM opensuse/tumbleweed
-RUN mkdir -p /mnt/app
-VOLUME [ "/mnt/app" ]
+WORKDIR /mnt/app
+RUN mkdir -p /mnt/data
+VOLUME [ "/mnt/app", "/mnt/data" ]
