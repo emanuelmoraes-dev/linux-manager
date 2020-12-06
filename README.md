@@ -9,8 +9,12 @@ cd linux-manager &&
 ./install # <folder_instalation>
 ```
 
-### OBS
+### NOTE
 If "folder_instalation" is not provided for the installation script, by default, the installation will be carried out in "$HOME/.local/share/lmg" (if **not** root) or "/usr/local/share/lmg (if root)
+
+### IMPORTANT
+
+it is recommended to run the installation script **without** using the root user. If run without root, the installation script will ask for the root password when needed
 
 ## show help
 
