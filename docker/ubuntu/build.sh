@@ -1,9 +1,9 @@
 #!/bin/sh
 
 [ -z "$NAME" ]    && NAME="lmg-ubuntu"
-[ -z "$VERSION" ] && VERSION=0.0.11
-[ -z "$DIRNAME" ] && DIRNAME="$(dirname "$0")"
+[ -z "$VERSION" ] && VERSION=0.0.12
+[ -z "$DOCKER_FOLDER" ] && DOCKER_FOLDER="$(dirname "$0")"
 
-DIRNAME="$(sh -c "cd \"$DIRNAME\" && pwd")"
+DOCKER_FOLDER="$(sh -c "cd \"$DOCKER_FOLDER\" && pwd")"
 
-docker build -t "$NAME:$VERSION" "$DIRNAME"
+docker build -t "$NAME:$VERSION" "$DOCKER_FOLDER"

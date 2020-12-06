@@ -1,10 +1,10 @@
 #!/bin/sh
 
 [ -z "$NAME" ]    && NAME="lmg-opensuse"
-[ -z "$VERSION" ] && VERSION=0.0.11
-[ -z "$DIRNAME" ] && DIRNAME="$(dirname "$0")/../../src"
+[ -z "$VERSION" ] && VERSION=0.0.12
+[ -z "$DIRNAME" ] && DIRNAME="$(dirname "$0")/../.."
 [ -z "$USER" ]    && USER="root"
 
 DIRNAME="$(sh -c "cd \"$DIRNAME\" && pwd")"
 
-docker run -ti --rm -v "$DIRNAME:/mnt/app" -e lmg=/mnt/app/lmg.sh -e app=/mnt/app --user="$USER" "$NAME:$VERSION" "$@"
+docker run -ti --rm -v "$DIRNAME/src:/mnt/app" -v "$DIRNAME/data:/mnt/data" -e LMG_DATA_FOLDER="$DIRNAME/data" --user="$USER" "$NAME:$VERSION" "$@"

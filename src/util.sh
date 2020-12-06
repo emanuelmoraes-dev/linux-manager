@@ -2,7 +2,7 @@
 
 function logerr {
     local message="$@"
-    printf >&2 "${ERROR_THEME}\n${message}${END_COLOR}\n"
+    printf >&2 "${LMG_ERROR_THEME}\n${message}${LMG_END_COLOR}\n"
 }
 
 # Ecoa mensagem de erro em erro padrão e código do erro em saída padrão
@@ -15,7 +15,7 @@ function helperr {
     local err="$?"
 
     if [ -z "$err" ] || [ "$err" = "0" ]; then
-        err=$ERR_UNEXPECTED
+        err=$LMG_ERR_UNEXPECTED
     fi
 
     if [ "$e" ]; then
