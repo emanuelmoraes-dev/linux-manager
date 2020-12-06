@@ -10,7 +10,7 @@ function main {
     cp -rf src/* "$folder_instalation" &&
     printf "$(./template.sh)" "$folder_instalation" > lmg &&
     chmod +x lmg &&
-    sudo mv lmg /usr/bin
+    sudo mv lmg /usr/local/bin
 }
 
 main "$@"
