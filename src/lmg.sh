@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=0.0.14
+VERSION=0.0.15
 
-# Linux-Manager@0.0.14
+# Linux-Manager@0.0.15
 #
 # Set of tools to automate and organize the activities performed and to be
 # performed in a linux operating system
@@ -10,6 +10,7 @@ VERSION=0.0.14
 # Named Parameters:
 #     --help:    Shows all options
 #     --version: Shows the current version
+#     sh:        Execute commands inside .lmg folder
 #     up:        Perform a task
 #         --name|-n:    Defines the task name
 #         --version|-v: Sets the version of the task
@@ -53,8 +54,9 @@ function helpout {
     echo "performed in a linux operating system"
     echo
     echo "Named Parameters:"
-	echo "    --help:    Shows all options"
+    echo "    --help:    Shows all options"
     echo "    --version: Shows the current version"
+    echo "    sh:        Execute commands inside .lmg folder"
     echo "    up:        Perform a task"
     echo "        --name|-n:    Defines the task name"
     echo "        --version|-v: Sets the version of the task"
@@ -69,7 +71,7 @@ function helpout {
     echo "        --args|-a:    Defines the script arguments"
     echo "    task:      creates a new task"
     echo "        --name|-n:    Defines the task name"
-	echo "        --version|-v: Sets the version of the task"
+    echo "        --version|-v: Sets the version of the task"
     echo "        --message|-m: Defines the task description"
     echo "        --type|-t:    Defines the type of task (\"script\" and \"info\")"
     echo "        --path|-p:    Name of the file containing the content to be copied"
@@ -324,17 +326,20 @@ function down {
 
 # Processa os parâmetros passados pelo usuário
 function apply_parameters {
-	if [ "$#" = 0 ]; then
-		helpout --autor &&
-		return 0
-	fi &&
+  local commands
+
+    if [ "$#" = 0 ]; then
+        helpout --autor &&
+        return 0
+    fi &&
 
     while [ "$#" != 0 ]; do
         case "$1" in
             --help) helpout --autor && return 0;;
             --version) printf "version: $VERSION\n" && return 0;;
-			up) shift && up "$@" && break;;
-			down) shift && down "$@" && break;;
+            sh) shift && commands="$@" && sh -c "cd $LMG_DATA_FOLDER && $commands" && break;;
+            up) shift && up "$@" && break;;
+            down) shift && down "$@" && break;;
             task) shift && task "$@" && break;;
             *) return $LMG_ERR_INVALID_ARG;;
         esac &&
