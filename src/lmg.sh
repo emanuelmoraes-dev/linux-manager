@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=0.0.15
+VERSION=0.0.16
 
-# Linux-Manager@0.0.15
+# Linux-Manager@0.0.16
 #
 # Set of tools to automate and organize the activities performed and to be
 # performed in a linux operating system
@@ -105,6 +105,10 @@ function task_parameters {
 	task_version=1 &&
 	task_name= &&
 	task_message= &&
+	task_content_up= &&
+	task_content_down= &&
+	task_path_up= &&
+	task_path_down= &&
 
 	while [ "$#" != 0 ]; do
 		case "$1" in
@@ -117,9 +121,9 @@ function task_parameters {
 				shift &&
 				task_script_path="$(to_absolute "$task_script_path")" &&
 				if [ "$task_up" = 1 ]; then
-					task_content_up="$(cat "$task_script_path")"
+					task_path_up="$task_script_path"
 				else
-					task_content_down="$(cat "$task_script_path")"
+					task_path_down="$task_script_path"
 				fi;;
 			--up|-u) task_up=1;;
 			--down|-d) task_up=0;;
@@ -143,6 +147,7 @@ function task_parameters {
 	if (
 		[ "$task_type" = "script" ] &&
 		[ -z "$task_content_up" ] &&
+		[ -z "$task_path_up" ] &&
 		! [ -f "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" ]
 	); then
 		return $LMG_ERR_REQUIRE_TASK_SCRIPT_CONTENT
@@ -151,6 +156,7 @@ function task_parameters {
 	if (
 		[ "$task_type" = "info" ] &&
 		[ -z "$task_content_up" ] &&
+		[ -z "$task_path_up" ] &&
 		! [ -f "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP" ]
 	); then
 		return $LMG_ERR_REQUIRE_TASK_INFO_CONTENT
@@ -170,10 +176,16 @@ function create_task_script {
 	if [ "$task_content_up" ]; then
 		printf "$task_content_up" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
 		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP"
+	elif [ "$task_path_up" ]; then
+		cp "$task_path_up" "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
+		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP"
 	fi &&
 
 	if [ "$task_content_down" ]; then
 		printf "$task_content_down" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN"
+	elif [ "$task_path_down" ]; then
+		cp "$task_path_down" "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
 		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN"
 	fi ||
 
@@ -190,10 +202,14 @@ function create_task_info {
 
 	if [ "$task_content_up" ]; then
 		printf "$task_content_up" > "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP"
+	elif [ "$task_path_up" ]; then
+		cp "$task_path_up" "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP"
 	fi &&
 
 	if [ "$task_content_down" ]; then
-		printf "$task_content_down" > "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP"
+		printf "$task_content_down" > "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
+	elif [ "$task_path_down" ]; then
+		cp "$task_path_down" "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
 	fi ||
 
 	return $?
