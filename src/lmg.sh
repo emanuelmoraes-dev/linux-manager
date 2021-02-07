@@ -126,9 +126,15 @@ function task_parameters {
 			if [[ "$1" == @* ]]; then
 				if [ "$task_up" = 1 ]; then
 					task_program_env_up="${$1:1}" &&
+					if [ -z "$task_program_env_up" ]; then
+						task_program_env_up=sh
+					fi &&
 					task_content_up="$2"
 				else
 					task_program_env_down="${$1:1}" &&
+					if [ -z "$task_program_env_down" ]; then
+						task_program_env_down=sh
+					fi &&
 					task_content_down="$2"
 				fi &&
 				shift;;
