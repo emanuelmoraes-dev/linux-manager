@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 VERSION=0.0.16
+DEFAULT_TASK_VERSION=current
 
 # Linux-Manager@0.0.16
 #
@@ -11,26 +12,24 @@ VERSION=0.0.16
 #     --help:    Shows all options
 #     --version: Shows the current version
 #     sh:        Execute commands inside .lmg folder
-#     up:        Perform a task
-#         --name|-n:    Defines the task name
-#         --version|-v: Sets the version of the task
+#     up <name>:        Perform a task with your <name>
+#         --version|-v: Sets the version of the task. Default value: current
 #         --env|-e:     Defines the content (environment) to be added before
 #                       the script
 #         --args|-a:    Defines the script arguments
-#     down:      Undo a task
-#         --name|-n:    Defines the task name
-#         --version|-v: Sets the version of the task
+#     down <name>:      Undo a task with your <name>
+#         --version|-v: Sets the version of the task. Default value: current
 #         --env|-e:     Defines the content (environment) to be added before
 #                       the script
 #         --args|-a:    Defines the script arguments
-#     task:      creates a new task
-#         --name|-n:    Defines the task name
-#         --version|-v: Sets the version of the task
+#     task <name>:      creates a new task with your <name>
+#         --version|-v: Sets the version of the task. Default value: current
 #         --message|-m: Defines the task description
-#         --type|-t:    Defines the type of task ("script" and "info")
 #         --path|-p:    Name of the file containing the content to be copied
 #                       to the task
 #         @:            Contains task content in literal format
+#         @[program]:   Contains the content of the task in literal format,
+#                       executed by <program>. Exs: @sh, @cat
 #         --up|-u:      Defines that the next --path|-p|@ will define the
 #                       content file responsible for doing the task
 #         --down|-d:    Defines that the next --path|-p|@ will define the
@@ -57,26 +56,23 @@ function helpout {
     echo "    --help:    Shows all options"
     echo "    --version: Shows the current version"
     echo "    sh:        Execute commands inside .lmg folder"
-    echo "    up:        Perform a task"
-    echo "        --name|-n:    Defines the task name"
-    echo "        --version|-v: Sets the version of the task"
+    echo "    up <name>:        Perform a task with your <name>"
+    echo "        --version|-v: Sets the version of the task. Default value: $DEFAULT_TASK_VERSION"
     echo "        --env|-e:     Defines the content (environment) to be added before"
     echo "                      the script"
     echo "        --args|-a:    Defines the script arguments"
-    echo "    down:      Undo a task"
-    echo "        --name|-n:    Defines the task name"
-    echo "        --version|-v: Sets the version of the task"
+    echo "    down <name>:      Undo a task with your <name>"
+    echo "        --version|-v: Sets the version of the task. Default value: $DEFAULT_TASK_VERSION"
     echo "        --env|-e:     Defines the content (environment) to be added before"
     echo "                      the script"
     echo "        --args|-a:    Defines the script arguments"
-    echo "    task:      creates a new task"
-    echo "        --name|-n:    Defines the task name"
-    echo "        --version|-v: Sets the version of the task"
+    echo "    task <name>:      creates a new task with your <name>"
+    echo "        --version|-v: Sets the version of the task. Default value: $DEFAULT_TASK_VERSION"
     echo "        --message|-m: Defines the task description"
-    echo "        --type|-t:    Defines the type of task (\"script\" and \"info\")"
     echo "        --path|-p:    Name of the file containing the content to be copied"
     echo "                      to the task"
-    echo "        @:            Contains task content in literal format"
+	echo "        @[program=sh]:   Contains the content of the task in literal format,"
+	echo "                      executed by <program>. Default value for <program>: sh"
     echo "        --up|-u:      Defines that the next --path|-p|@ will define the"
     echo "                      content file responsible for doing the task"
     echo "        --down|-d:    Defines that the next --path|-p|@ will define the"
@@ -101,8 +97,9 @@ function config {
 function task_parameters {
 	local task_up=1 &&
 	local task_script_path &&
-	task_type=script &&
-	task_version=1 &&
+	task_version="$DEFAULT_TASK_VERSION" &&
+	task_program_env_up=sh &&
+	task_program_env_down=sh &&
 	task_name= &&
 	task_message= &&
 	task_content_up= &&
@@ -112,9 +109,7 @@ function task_parameters {
 
 	while [ "$#" != 0 ]; do
 		case "$1" in
-			--name|-n) task_name="$2" && shift;;
 			--message|-m) task_message="$2" && shift;;
-			--type|-t) task_type="$2" && shift;;
 			--version|-v) task_version="$2" && shift;;
 			--path|-p)
 				task_script_path="$2" &&
@@ -127,14 +122,21 @@ function task_parameters {
 				fi;;
 			--up|-u) task_up=1;;
 			--down|-d) task_up=0;;
-			@)
+			*)
+			if [[ "$1" == @* ]]; then
 				if [ "$task_up" = 1 ]; then
+					task_program_env_up="${$1:1}" &&
 					task_content_up="$2"
 				else
+					task_program_env_down="${$1:1}" &&
 					task_content_down="$2"
 				fi &&
 				shift;;
-			*) return $LMG_ERR_INVALID_TASK_ARG
+			elif [[ "$1" == -* ]]; then
+				return $LMG_ERR_INVALID_TASK_ARG
+			else
+				task_name="$2" && shift;;
+			fi
 		esac &&
 		shift ||
 		return $?
@@ -145,36 +147,25 @@ function task_parameters {
 	fi &&
 
 	if (
-		[ "$task_type" = "script" ] &&
 		[ -z "$task_content_up" ] &&
 		[ -z "$task_path_up" ] &&
 		! [ -f "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" ]
 	); then
-		return $LMG_ERR_REQUIRE_TASK_SCRIPT_CONTENT
-	fi &&
-
-	if (
-		[ "$task_type" = "info" ] &&
-		[ -z "$task_content_up" ] &&
-		[ -z "$task_path_up" ] &&
-		! [ -f "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP" ]
-	); then
-		return $LMG_ERR_REQUIRE_TASK_INFO_CONTENT
+		return $LMG_ERR_REQUIRE_TASK_CONTENT
 	fi ||
 
 	return $?
 }
 
-# Cria uma tarefa do tipo "script"
+# Cria uma tarefa
 function create_task_script {
 	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
 	mkdir -p "$LMG_TASK_FOLDER" &&
-	printf "$task_type" > "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME" &&
 	printf "$task_name" > "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" &&
 	printf "$task_message" > "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" &&
 
 	if [ "$task_content_up" ]; then
-		printf "$task_content_up" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
+		printf "$task_program_env_up\n%s" "$task_content_up" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
 		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP"
 	elif [ "$task_path_up" ]; then
 		cp "$task_path_up" "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
@@ -182,7 +173,7 @@ function create_task_script {
 	fi &&
 
 	if [ "$task_content_down" ]; then
-		printf "$task_content_down" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+		printf "$task_program_env_down\n%s" "$task_content_down" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
 		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN"
 	elif [ "$task_path_down" ]; then
 		cp "$task_path_down" "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
@@ -192,54 +183,29 @@ function create_task_script {
 	return $?
 }
 
-# Cria uma tarefa do tipo "info"
-function create_task_info {
-	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	mkdir -p "$LMG_TASK_FOLDER" &&
-	printf "$task_type" > "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME" &&
-	printf "$task_name" > "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" &&
-	printf "$task_message" > "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" &&
-
-	if [ "$task_content_up" ]; then
-		printf "$task_content_up" > "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP"
-	elif [ "$task_path_up" ]; then
-		cp "$task_path_up" "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP"
-	fi &&
-
-	if [ "$task_content_down" ]; then
-		printf "$task_content_down" > "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
-	elif [ "$task_path_down" ]; then
-		cp "$task_path_down" "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
-	fi ||
-
-	return $?
-}
-
 # cria uma tarefa
 function task {
 	task_parameters "$@" &&
-
-	case "$task_type" in
-		script) create_task_script;;
-		info) create_task_info;;
-		*) return $LMG_ERR_INVALID_TASK_TYPE;;
-	esac ||
-
+	create_task_script ||
 	return $?
 }
 
 # processa os parâmetros de up e down
 function up_down_parameters {
 	task_name= &&
-	task_version=1 &&
+	task_version="$DEFAULT_TASK_VERSION" &&
 
 	while [ "$#" != 0 ]; do
 		case "$1" in
-			--name|-n) task_name="$2" && shift;;
 			--version|-v) task_version="$2" && shift;;
 			--env|-e) task_env="$2" && shift;;
 			--args|-a) task_args="$2" && shift;;
-			*) return $LMG_ERR_INVALID_TASK_ARG
+			*)
+			if [[ "$1" == -* ]]; then
+				return $LMG_ERR_INVALID_TASK_ARG
+			else
+				task_name="$2" && shift;;
+			fi
 		esac &&
 		shift ||
 		return $?
@@ -256,42 +222,27 @@ function up_down_parameters {
 function up {
 	up_down_parameters "$@" &&
 	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	local task_type="$(cat "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME")" &&
 	local LMG_TASK_RUNNER_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
 
-	mkdir -p "$LMG_TASK_RUNNER_FOLDER" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
 	cp "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
 	cp "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
 	printf "$task_version" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
 
 	local task_content_up &&
 
-	case "$task_type" in
-		script)
-			cp "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
+	cp "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 
-			task_content_up='"$(dirname $0)"'"/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
-			if [ "$task_env" ]; then
-				task_content_up="$task_env $task_content_up"
-			fi &&
-			if [ "$task_args" ]; then
-				task_content_up="$task_content_up $task_args"
-			fi &&
-			printf '%s\n%s' '#!/usr/bin/env bash' \
-				"$task_content_up" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-			chmod +x "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-			"$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP"
-			;;
-		info)
-			cp "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP" "$LMG_TASK_RUNNER_FOLDER/" &&
-
-			if which "$LMG_TASK_INFO_VIEWER" 1> /dev/null 2> /dev/null; then
-				"$LMG_TASK_INFO_VIEWER" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_INFO_NAME_UP"
-			else
-				cat "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_INFO_NAME_UP"
-			fi
-	esac ||
+	task_content_up='"$(dirname $0)"'"/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
+	if [ "$task_env" ]; then
+		task_content_up="$task_env $task_content_up"
+	fi &&
+	if [ "$task_args" ]; then
+		task_content_up="$task_content_up $task_args"
+	fi &&
+	printf '%s\n%s' '#!/usr/bin/env sh' \
+		"$task_content_up" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
+	chmod +x "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
+	"$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" ||
 
 	return $?
 }
@@ -300,42 +251,28 @@ function up {
 function down {
 	up_down_parameters "$@" &&
 	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	local task_type="$(cat "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME")" &&
 	local LMG_TASK_RUNNER_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
 
 	mkdir -p "$LMG_TASK_RUNNER_FOLDER" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
 	cp "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
 	cp "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
 	printf "$task_version" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
 
 	local task_content_down &&
 
-	case "$task_type" in
-		script)
-			cp "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
+	cp "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 
-			task_content_down='"$(dirname $0)"'"/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
-			if [ "$task_env" ]; then
-				task_content_down="$task_env $task_content_down"
-			fi &&
-			if [ "$task_args" ]; then
-				task_content_down="$task_content_down $task_args"
-			fi &&
-			printf '%s\n%s' '#!/usr/bin/env bash' \
-				"$task_content_down" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-			chmod +x "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-			"$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN"
-			;;
-		info)
-			cp "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_DOWN" "$LMG_TASK_RUNNER_FOLDER/" &&
-
-			if which "$LMG_TASK_INFO_VIEWER" 1> /dev/null 2> /dev/null; then
-				"$LMG_TASK_INFO_VIEWER" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
-			else
-				cat "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
-			fi
-	esac ||
+	task_content_down='"$(dirname $0)"'"/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
+	if [ "$task_env" ]; then
+		task_content_down="$task_env $task_content_down"
+	fi &&
+	if [ "$task_args" ]; then
+		task_content_down="$task_content_down $task_args"
+	fi &&
+	printf '%s\n%s' '#!/usr/bin/env sh' \
+		"$task_content_down" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+	chmod +x "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+	"$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" ||
 
 	return $?
 }
@@ -372,12 +309,10 @@ function main {
 	apply_parameters "$@" || (
 		err=$?
 		case "$err" in
-			$LMG_ERR_INVALID_ARG) return $(m="Erro: Argumento inválido!" e=$err helperr -v);;
-			$LMG_ERR_INVALID_TASK_TYPE) return $(m="Erro: tipo de tarefa inválida!" e=$err helperr);;
-			$LMG_ERR_INVALID_TASK_ARG) return $(m="Erro: Argumento de tarefa inválido!" e=$err helperr);;
-			$LMG_ERR_REQUIRE_TASK_NAME) return $(m="Erro: O nome da tarefa é obrigatório!" e=$err helperr);;
-			$LMG_ERR_REQUIRE_TASK_SCRIPT_CONTENT) return $(m="Erro: Uma tarefa do tipo \"script\" deve possuir um script!" e=$err helperr);;
-			$LMG_ERR_REQUIRE_TASK_INFO_CONTENT) return $(m="Erro: Uma tarefa do tipo \"info\" deve possuir um conteúdo!" e=$err helperr);;
+			$LMG_ERR_INVALID_ARG) return $(m="$LMG_ERR_INVALID_ARG_MESSAGE" e=$err helperr -v);;
+			$LMG_ERR_INVALID_TASK_ARG) return $(m="$LMG_ERR_INVALID_TASK_ARG_MESSAGE" e=$err helperr);;
+			$LMG_ERR_REQUIRE_TASK_NAME) return $(m="$LMG_ERR_REQUIRE_TASK_NAME_MESSAGE" e=$err helperr);;
+			$LMG_ERR_REQUIRE_TASK_CONTENT) return $(m="$LMG_ERR_REQUIRE_TASK_SCRIPT_CONTENT_MESSAGE" e=$err helperr);;
 			*) return $(helperr);;
 		esac
 	)

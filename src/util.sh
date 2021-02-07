@@ -2,7 +2,7 @@
 
 function logerr {
     local message="$@"
-    printf >&2 "${LMG_ERROR_THEME}\n${message}${LMG_END_COLOR}\n"
+    printf >&2 "${LMG_ERROR_THEME}\n%s${LMG_END_COLOR}\n" "$message"
 }
 
 # Ecoa mensagem de erro em erro padrão e código do erro em saída padrão
@@ -10,7 +10,7 @@ function logerr {
 # Parâmetros:
 #     -v: Mostra mensagem de ajuda com a descrição de todas as opções
 #
-#EX: m="Erro interno! Algo inesperado ocorreu" e=100 helperr -v
+# Ex: m="Erro interno! Algo inesperado ocorreu" e=100 helperr -v
 function helperr {
     local err="$?"
 
@@ -25,14 +25,16 @@ function helperr {
     local message="$m"
 
     if [ -z "$message" ]; then
-        message="Erro interno! Algo inesperado ocorreu!"
+        message="$LMG_ERR_UNEXPECTED_MESSAGE"
     fi
 
     if [ "$1" == "-v" ]; then
         helpout >&2
     fi
 
-    logerr "$message [Código do erro: $err]"
+    local sufix="$(printf "$LMG_SUFIX_ERR" "$err")"
+
+    logerr "${message}${sufix}"
     echo $err
 }
 

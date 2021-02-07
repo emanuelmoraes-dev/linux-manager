@@ -15,23 +15,11 @@
 # Nome do script em task_runner copiado do scripto de task
 [ -z "$LMG_TASK_RUNNER_COMMAND_FILENAME" ] && LMG_TASK_RUNNER_COMMAND_FILENAME="command.sh"
 
-# Nome do script executável para executar a tarefa do tipo "script"
+# Nome do script executável para executar a tarefa
 [ -z "$LMG_TASK_SCRIPT_NAME_UP" ] && LMG_TASK_SCRIPT_NAME_UP="task-up.sh"
 
-# Nome do script executável para executar a tarefa do tipo "script"
+# Nome do script executável para executar a tarefa
 [ -z "$LMG_TASK_SCRIPT_NAME_DOWN" ] && LMG_TASK_SCRIPT_NAME_DOWN="task-down.sh"
-
-# Nome do arquivo que contém o conteúdo da tarefa do tipo "info"
-[ -z "$LMG_TASK_INFO_NAME_UP" ] && LMG_TASK_INFO_NAME_UP="task-up.md"
-
-# Nome do arquivo que contém o conteúdo para reverter a tarefa do tipo "info"
-[ -z "$LMG_TASK_INFO_NAME_DOWN" ] && LMG_TASK_INFO_NAME_DOWN="task-down.md"
-
-# Nome do programa para visualizar o conteúdo da tarefa do tipo "info"
-[ -z "$LMG_TASK_INFO_VIEWER" ] && LMG_TASK_INFO_VIEWER="cat"
-
-# Nome do arquivo que conterá o nome do tipo da tarefa
-[ -z "$LMG_TASK_TYPE_FILENAME" ] && LMG_TASK_TYPE_FILENAME="task-type"
 
 # Nome do arquivo que conterá o nome da tarefa
 [ -z "$LMG_TASK_NAME_FILENAME" ] && LMG_TASK_NAME_FILENAME="task-name"
@@ -40,15 +28,26 @@
 [ -z "$LMG_TASK_MESSAGE_FILENAME" ] && LMG_TASK_MESSAGE_FILENAME="task-message"
 
 # CÓDIGOS DE ERRO DO SCRIPT (90-119)
+LMG_SUFIX_ERR=" [Código do erro: %s]"
+
 LMG_ERR_UNEXPECTED=90
+LMG_ERR_UNEXPECTED_MESSAGE="Erro interno! Algo inesperado ocorreu!"
+
 ## INVALID (9X)
+
 LMG_ERR_INVALID_ARG=91
-LMG_ERR_INVALID_TASK_TYPE=92
-LMG_ERR_INVALID_TASK_ARG=93
+LMG_ERR_INVALID_ARG_MESSAGE="Erro: Argumento inválido!"
+
+LMG_ERR_INVALID_TASK_ARG=92
+LMG_ERR_INVALID_TASK_ARG_MESSAGE="Erro: Argumento de tarefa inválido!"
+
 ## REQUIRE (10X)
+
 LMG_ERR_REQUIRE_TASK_NAME=100
-LMG_ERR_REQUIRE_TASK_SCRIPT_CONTENT=101
-LMG_ERR_REQUIRE_TASK_INFO_CONTENT=102
+LMG_ERR_REQUIRE_TASK_NAME_MESSAGE="Erro: O nome da tarefa é obrigatório!"
+
+LMG_ERR_REQUIRE_TASK_CONTENT=101
+LMG_ERR_REQUIRE_TASK_CONTENT_MESSAGE="Erro: Uma tarefa deve possuir um conteúdo!"
 
 # CORES
 LMG_RED="\e[31;1m"
