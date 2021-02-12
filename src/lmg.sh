@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=0.0.16
+VERSION=0.0.17
 
-# Linux-Manager@0.0.16
+# Linux-Manager@0.0.17
 #
 # Set of tools to automate and organize the activities performed and to be
 # performed in a linux operating system
@@ -148,7 +148,7 @@ function task_parameters {
 		[ "$task_type" = "script" ] &&
 		[ -z "$task_content_up" ] &&
 		[ -z "$task_path_up" ] &&
-		! [ -f "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" ]
+		! [ -f "$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" ]
 	); then
 		return $LMG_ERR_REQUIRE_TASK_SCRIPT_CONTENT
 	fi &&
@@ -157,7 +157,7 @@ function task_parameters {
 		[ "$task_type" = "info" ] &&
 		[ -z "$task_content_up" ] &&
 		[ -z "$task_path_up" ] &&
-		! [ -f "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP" ]
+		! [ -f "$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP" ]
 	); then
 		return $LMG_ERR_REQUIRE_TASK_INFO_CONTENT
 	fi ||
@@ -167,26 +167,26 @@ function task_parameters {
 
 # Cria uma tarefa do tipo "script"
 function create_task_script {
-	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	mkdir -p "$LMG_TASK_FOLDER" &&
-	printf "$task_type" > "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME" &&
-	printf "$task_name" > "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" &&
-	printf "$task_message" > "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" &&
+	local lmg_task="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
+	mkdir -p "$lmg_task" &&
+	printf "$task_type" > "$lmg_task/$LMG_TASK_TYPE_FILENAME" &&
+	printf "$task_name" > "$lmg_task/$LMG_TASK_NAME_FILENAME" &&
+	printf "$task_message" > "$lmg_task/$LMG_TASK_MESSAGE_FILENAME" &&
 
 	if [ "$task_content_up" ]; then
-		printf "$task_content_up" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP"
+		printf "$task_content_up" > "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP" &&
+		chmod +x "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP"
 	elif [ "$task_path_up" ]; then
-		cp "$task_path_up" "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP"
+		cp "$task_path_up" "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP" &&
+		chmod +x "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP"
 	fi &&
 
 	if [ "$task_content_down" ]; then
-		printf "$task_content_down" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN"
+		printf "$task_content_down" > "$lmg_task/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+		chmod +x "lmg_task$/$LMG_TASK_SCRIPT_NAME_DOWN"
 	elif [ "$task_path_down" ]; then
-		cp "$task_path_down" "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN"
+		cp "$task_path_down" "$lmg_task/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+		chmod +x "$lmg_task/$LMG_TASK_SCRIPT_NAME_DOWN"
 	fi ||
 
 	return $?
@@ -194,22 +194,22 @@ function create_task_script {
 
 # Cria uma tarefa do tipo "info"
 function create_task_info {
-	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	mkdir -p "$LMG_TASK_FOLDER" &&
-	printf "$task_type" > "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME" &&
-	printf "$task_name" > "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" &&
-	printf "$task_message" > "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" &&
+	local lmg_task="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
+	mkdir -p "$lmg_task" &&
+	printf "$task_type" > "$lmg_task/$LMG_TASK_TYPE_FILENAME" &&
+	printf "$task_name" > "$lmg_task/$LMG_TASK_NAME_FILENAME" &&
+	printf "$task_message" > "$lmg_task/$LMG_TASK_MESSAGE_FILENAME" &&
 
 	if [ "$task_content_up" ]; then
-		printf "$task_content_up" > "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP"
+		printf "$task_content_up" > "$lmg_task/$LMG_TASK_INFO_NAME_UP"
 	elif [ "$task_path_up" ]; then
-		cp "$task_path_up" "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP"
+		cp "$task_path_up" "$lmg_task/$LMG_TASK_INFO_NAME_UP"
 	fi &&
 
 	if [ "$task_content_down" ]; then
-		printf "$task_content_down" > "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
+		printf "$task_content_down" > "$lmg_task/$LMG_TASK_INFO_NAME_DOWN"
 	elif [ "$task_path_down" ]; then
-		cp "$task_path_down" "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
+		cp "$task_path_down" "$lmg_task/$LMG_TASK_INFO_NAME_DOWN"
 	fi ||
 
 	return $?
@@ -255,21 +255,21 @@ function up_down_parameters {
 # executa uma tarefa
 function up {
 	up_down_parameters "$@" &&
-	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	local task_type="$(cat "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME")" &&
-	local LMG_TASK_RUNNER_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
+	local lmg_task="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
+	local task_type="$(cat "$lmg_task/$LMG_TASK_TYPE_FILENAME")" &&
+	local lmg_task_runner="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
 
-	mkdir -p "$LMG_TASK_RUNNER_FOLDER" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	printf "$task_version" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
+	mkdir -p "$lmg_task_runner" &&
+	cp "$lmg_task/$LMG_TASK_TYPE_FILENAME" "$lmg_task_runner/" &&
+	cp "$lmg_task/$LMG_TASK_NAME_FILENAME" "$lmg_task_runner/" &&
+	cp "$lmg_task/$LMG_TASK_MESSAGE_FILENAME" "$lmg_task_runner/" &&
+	printf "$task_version" > "$lmg_task_runner/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
 
 	local task_content_up &&
 
 	case "$task_type" in
 		script)
-			cp "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
+			cp "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP" "$lmg_task_runner/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 
 			task_content_up='"$(dirname $0)"'"/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 			if [ "$task_env" ]; then
@@ -279,17 +279,17 @@ function up {
 				task_content_up="$task_content_up $task_args"
 			fi &&
 			printf '%s\n%s' '#!/usr/bin/env bash' \
-				"$task_content_up" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-			chmod +x "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-			"$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP"
+				"$task_content_up" > "$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_UP" &&
+			chmod +x "$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_UP" &&
+			"$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_UP"
 			;;
 		info)
-			cp "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_UP" "$LMG_TASK_RUNNER_FOLDER/" &&
+			cp "$lmg_task/$LMG_TASK_INFO_NAME_UP" "$lmg_task_runner/" &&
 
 			if which "$LMG_TASK_INFO_VIEWER" 1> /dev/null 2> /dev/null; then
-				"$LMG_TASK_INFO_VIEWER" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_INFO_NAME_UP"
+				"$LMG_TASK_INFO_VIEWER" "$lmg_task_runner/$LMG_TASK_INFO_NAME_UP"
 			else
-				cat "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_INFO_NAME_UP"
+				cat "$lmg_task_runner/$LMG_TASK_INFO_NAME_UP"
 			fi
 	esac ||
 
@@ -299,21 +299,21 @@ function up {
 # desfaz a execução de uma tarefa
 function down {
 	up_down_parameters "$@" &&
-	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	local task_type="$(cat "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME")" &&
-	local LMG_TASK_RUNNER_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
+	local lmg_task="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
+	local task_type="$(cat "$lmg_task/$LMG_TASK_TYPE_FILENAME")" &&
+	local lmg_task_runner="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
 
-	mkdir -p "$LMG_TASK_RUNNER_FOLDER" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_TYPE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	printf "$task_version" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
+	mkdir -p "$lmg_task_runner" &&
+	cp "$lmg_task/$LMG_TASK_TYPE_FILENAME" "$lmg_task_runner/" &&
+	cp "$lmg_task/$LMG_TASK_NAME_FILENAME" "$lmg_task_runner/" &&
+	cp "$lmg_task/$LMG_TASK_MESSAGE_FILENAME" "$lmg_task_runner/" &&
+	printf "$task_version" > "$lmg_task_runner/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
 
 	local task_content_down &&
 
 	case "$task_type" in
 		script)
-			cp "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
+			cp "$lmg_task/$LMG_TASK_SCRIPT_NAME_DOWN" "$lmg_task_runner/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 
 			task_content_down='"$(dirname $0)"'"/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 			if [ "$task_env" ]; then
@@ -323,17 +323,17 @@ function down {
 				task_content_down="$task_content_down $task_args"
 			fi &&
 			printf '%s\n%s' '#!/usr/bin/env bash' \
-				"$task_content_down" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-			chmod +x "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-			"$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN"
+				"$task_content_down" > "$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+			chmod +x "$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+			"$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_DOWN"
 			;;
 		info)
-			cp "$LMG_TASK_FOLDER/$LMG_TASK_INFO_NAME_DOWN" "$LMG_TASK_RUNNER_FOLDER/" &&
+			cp "$lmg_task/$LMG_TASK_INFO_NAME_DOWN" "$lmg_task_runner/" &&
 
 			if which "$LMG_TASK_INFO_VIEWER" 1> /dev/null 2> /dev/null; then
-				"$LMG_TASK_INFO_VIEWER" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
+				"$LMG_TASK_INFO_VIEWER" "$lmg_task_runner/$LMG_TASK_INFO_NAME_DOWN"
 			else
-				cat "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_INFO_NAME_DOWN"
+				cat "$lmg_task_runner/$LMG_TASK_INFO_NAME_DOWN"
 			fi
 	esac ||
 
