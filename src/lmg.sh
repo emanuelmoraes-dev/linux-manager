@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-VERSION=0.0.16
+VERSION=0.0.17
 DEFAULT_TASK_VERSION=current
 
-# Linux-Manager@0.0.16
+# Linux-Manager@0.0.17
 #
 # Set of tools to automate and organize the activities performed and to be
 # performed in a linux operating system
@@ -155,7 +155,7 @@ function task_parameters {
 	if (
 		[ -z "$task_content_up" ] &&
 		[ -z "$task_path_up" ] &&
-		! [ -f "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" ]
+		! [ -f "$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" ]
 	); then
 		return $LMG_ERR_REQUIRE_TASK_CONTENT
 	fi ||
@@ -165,25 +165,25 @@ function task_parameters {
 
 # Cria uma tarefa
 function create_task_script {
-	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	mkdir -p "$LMG_TASK_FOLDER" &&
-	printf "$task_name" > "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" &&
-	printf "$task_message" > "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" &&
+	local lmg_task="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
+	mkdir -p "$lmg_task" &&
+	printf "$task_name" > "$lmg_task/$LMG_TASK_NAME_FILENAME" &&
+	printf "$task_message" > "$lmg_task/$LMG_TASK_MESSAGE_FILENAME" &&
 
 	if [ "$task_content_up" ]; then
-		printf "$task_program_env_up\n%s" "$task_content_up" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP"
+		printf "$task_program_env_up\n%s" "$task_content_up" > "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP" &&
+		chmod +x "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP"
 	elif [ "$task_path_up" ]; then
-		cp "$task_path_up" "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP"
+		cp "$task_path_up" "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP" &&
+		chmod +x "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP"
 	fi &&
 
 	if [ "$task_content_down" ]; then
-		printf "$task_program_env_down\n%s" "$task_content_down" > "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN"
+		printf "$task_program_env_down\n%s" "$task_content_down" > "$lmg_task/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+		chmod +x "$lmg_task/$LMG_TASK_SCRIPT_NAME_DOWN"
 	elif [ "$task_path_down" ]; then
-		cp "$task_path_down" "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-		chmod +x "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN"
+		cp "$task_path_down" "$lmg_task/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+		chmod +x "$lmg_task/$LMG_TASK_SCRIPT_NAME_DOWN"
 	fi ||
 
 	return $?
@@ -227,16 +227,16 @@ function up_down_parameters {
 # executa uma tarefa
 function up {
 	up_down_parameters "$@" &&
-	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	local LMG_TASK_RUNNER_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
+	local lmg_task="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
+	local lmg_task_runner="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
 
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	printf "$task_version" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
+	cp "$lmg_task/$LMG_TASK_NAME_FILENAME" "$lmg_task_runner/" &&
+	cp "$lmg_task/$LMG_TASK_MESSAGE_FILENAME" "$lmg_task_runner/" &&
+	printf "$task_version" > "$lmg_task_runner/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
 
 	local task_content_up &&
 
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
+	cp "$lmg_task/$LMG_TASK_SCRIPT_NAME_UP" "$lmg_task_runner/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 
 	task_content_up='"$(dirname $0)"'"/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 	if [ "$task_env" ]; then
@@ -246,9 +246,9 @@ function up {
 		task_content_up="$task_content_up $task_args"
 	fi &&
 	printf '%s\n%s' '#!/usr/bin/env sh' \
-		"$task_content_up" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-	chmod +x "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" &&
-	"$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_UP" ||
+		"$task_content_up" > "$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_UP" &&
+	chmod +x "$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_UP" &&
+	"$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_UP" ||
 
 	return $?
 }
@@ -256,17 +256,17 @@ function up {
 # desfaz a execução de uma tarefa
 function down {
 	up_down_parameters "$@" &&
-	local LMG_TASK_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
-	local LMG_TASK_RUNNER_FOLDER="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
+	local lmg_task="$LMG_DATA_FOLDER/$LMG_TASK_FOLDER/$task_name/$task_version" &&
+	local lmg_task_runner="$LMG_DATA_FOLDER/$LMG_TASK_RUNNER_FOLDER/$task_name/$(date '+%Y-%m-%d_%H:%M:%S')" &&
 
-	mkdir -p "$LMG_TASK_RUNNER_FOLDER" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_NAME_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_MESSAGE_FILENAME" "$LMG_TASK_RUNNER_FOLDER/" &&
-	printf "$task_version" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
+	mkdir -p "$lmg_task_runner" &&
+	cp "$lmg_task/$LMG_TASK_NAME_FILENAME" "$lmg_task_runner/" &&
+	cp "$lmg_task/$LMG_TASK_MESSAGE_FILENAME" "$lmg_task_runner/" &&
+	printf "$task_version" > "$lmg_task_runner/$LMG_TASK_RUNNER_VERSION_FILENAME" &&
 
 	local task_content_down &&
 
-	cp "$LMG_TASK_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
+	cp "$lmg_task/$LMG_TASK_SCRIPT_NAME_DOWN" "$lmg_task_runner/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 
 	task_content_down='"$(dirname $0)"'"/$LMG_TASK_RUNNER_COMMAND_FILENAME" &&
 	if [ "$task_env" ]; then
@@ -276,9 +276,9 @@ function down {
 		task_content_down="$task_content_down $task_args"
 	fi &&
 	printf '%s\n%s' '#!/usr/bin/env sh' \
-		"$task_content_down" > "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-	chmod +x "$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" &&
-	"$LMG_TASK_RUNNER_FOLDER/$LMG_TASK_SCRIPT_NAME_DOWN" ||
+		"$task_content_down" > "$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+	chmod +x "$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_DOWN" &&
+	"$lmg_task_runner/$LMG_TASK_SCRIPT_NAME_DOWN" ||
 
 	return $?
 }
