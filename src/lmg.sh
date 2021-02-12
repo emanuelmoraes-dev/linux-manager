@@ -137,12 +137,12 @@ function task_parameters {
 					fi &&
 					task_content_down="$2"
 				fi &&
-				shift;;
+				shift
 			elif [[ "$1" == -* ]]; then
 				return $LMG_ERR_INVALID_TASK_ARG
 			else
-				task_name="$2" && shift;;
-			fi
+				task_name="$2" && shift
+			fi;;
 		esac &&
 		shift ||
 		return $?
@@ -210,8 +210,8 @@ function up_down_parameters {
 			if [[ "$1" == -* ]]; then
 				return $LMG_ERR_INVALID_TASK_ARG
 			else
-				task_name="$2" && shift;;
-			fi
+				task_name="$2" && shift
+			fi;;
 		esac &&
 		shift ||
 		return $?
